@@ -1,8 +1,11 @@
 from flask import (
     Flask, render_template, request,
     redirect, url_for, make_response,
-    abort, flash
+    abort, flash, session
 )
+
+import secrets
+import hmac
 
 import sqlite3
 import csv
@@ -25,6 +28,27 @@ app.secret_key = os.environ.get(
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, "research.db")
+@app.context_processor
+def inject_security_token():
+
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(32)
+
+    return {
+        "csrf_token": session["csrf_token"]
+    }
+
+
+def verify_csrf():
+
+    submitted = request.form.get("csrf_token", "")
+    expected = session.get("csrf_token", "")
+
+    if not expected or not hmac.compare_digest(
+        submitted, expected
+    ):
+        abort(403)
+
 
 RESEARCH_TYPES = [
     "Basic Research",
@@ -197,11 +221,56 @@ def view_research(research_id):
     )
 
 
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+
+    if request.method == "POST":
+
+        verify_csrf()
+
+        password = request.form.get("password", "")
+        admin_password = os.environ.get("ADMIN_PASSWORD", "")
+
+        if not admin_password:
+            flash("Administrator password is not configured.", "error")
+            return redirect(url_for("admin_login"))
+
+        if hmac.compare_digest(password, admin_password):
+
+            session.clear()
+            session["is_admin"] = True
+
+            flash("Administrator login successful.", "success")
+
+            return redirect(url_for("index"))
+
+        flash("Incorrect administrator password.", "error")
+
+    return render_template("admin_login.html")
+
+
+@app.route("/admin/logout", methods=["POST"])
+def admin_logout():
+
+    verify_csrf()
+
+    session.clear()
+
+    flash("Administrator logged out.", "success")
+
+    return redirect(url_for("index"))
+
+
+      
+
+
 @app.route("/delete/<int:research_id>", methods=["POST"])
 def delete_research(research_id):
 
-    # Demonstration only: protect this route with
-    # administrator authentication before public deployment.
+    if not session.get("is_admin"):
+        abort(403)
+
+    verify_csrf()
 
     connection = get_db()
 
@@ -213,9 +282,10 @@ def delete_research(research_id):
     connection.commit()
     connection.close()
 
-    flash("Research record deleted.", "success")
+    flash("Research successfully deleted.", "success")
 
     return redirect(url_for("index"))
+
 
 
 @app.route("/download/csv")

@@ -334,6 +334,38 @@
 </div>
 
 {% endif %}
+        {% if session.get('is_admin') %}
+
+<div class="admin-controls">
+
+    <h3>Administrator Mode</h3>
+
+    <form action="{{ url_for('admin_logout') }}"
+          method="POST">
+
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token }}">
+
+        <button type="submit">
+            Logout
+        </button>
+
+    </form>
+
+</div>
+
+{% else %}
+
+<div class="admin-controls">
+
+    <a href="{{ url_for('admin_login') }}">
+        Administrator Login
+    </a>
+
+</div>
+
+{% endif %}
 
         {% for paper in research %}
 
@@ -373,6 +405,28 @@
                 ) }}">
                     View Details
                 </a>
+                 
+                 {% if session.get('is_admin') %}
+
+<form action="{{ url_for(
+    'delete_research',
+    research_id=paper['id']
+) }}"
+method="POST"
+onsubmit="return confirm('Are you sure you want to permanently delete this research?');">
+
+    <input type="hidden"
+           name="csrf_token"
+           value="{{ csrf_token }}">
+
+    <button type="submit" class="delete-button">
+        Delete Research
+    </button>
+
+</form>
+
+{% endif %}
+
 
             </div>
 
