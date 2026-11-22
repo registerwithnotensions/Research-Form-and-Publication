@@ -345,12 +345,14 @@ def not_found(error):
     return "Research document not found.", 404
 
 
+# Initialize database when the application starts
+initialize_database()
+
+
 if __name__ == "__main__":
-
-    initialize_database()
-
     app.run(
         host="127.0.0.1",
         port=5000,
         debug=False
     )
+
