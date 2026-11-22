@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>RF | Research Form and Publication</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="logo">RF</div>
+
+        <div>
+            <h1>Research Forum</h1>
+            <p>Research Form and Publication</p>
+        </div>
+
+    </div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#services">Services</a>
+        <a href="#submit">Submit Research</a>
+        <a href="#library">Publications</a>
+    </nav>
+
+</header>
+
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <span class="badge">OPEN RESEARCH PLATFORM</span>
+
+        <h2>
+            Discover. Research.
+            <span>Innovate.</span>
+        </h2>
+
+        <p>
+            A collaborative research and publication platform
+            for engineering, science, technology and innovation.
+        </p>
+
+        <a href="#submit" class="button">
+            Start Research
+        </a>
+
+        <a href="#library" class="button secondary">
+            Explore Publications
+        </a>
+
+    </div>
+
+    <div class="hero-card">
+
+        <div class="card-symbol">RF</div>
+
+        <h3>Research for Everyone</h3>
+
+        <p>
+            Think beyond boundaries.
+            Develop ideas. Share knowledge.
+        </p>
+
+        <div class="stat">
+            <strong>{{ total }}</strong>
+            <span>Research Publications</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="services" id="services">
+
+    <div class="section-title">
+        <span>OUR SERVICES</span>
+        <h2>Research Categories</h2>
+        <p>Explore different approaches to research and innovation.</p>
+    </div>
+
+    <div class="service-grid">
+
+        <article class="service-card">
+            <div class="icon">01</div>
+            <h3>Basic Research</h3>
+            <p>Investigate fundamental concepts and scientific principles.</p>
+        </article>
+
+        <article class="service-card">
+            <div class="icon">02</div>
+            <h3>Applied Research</h3>
+            <p>Develop practical solutions to engineering problems.</p>
+        </article>
+
+        <article class="service-card">
+            <div class="icon">03</div>
+            <h3>Thought Experiment</h3>
+            <p>Investigate theoretical possibilities through logical scenarios.</p>
+        </article>
+
+        <article class="service-card">
+            <div class="icon">04</div>
+            <h3>Quantitative Research</h3>
+            <p>Analyse numerical data, measurements and statistics.</p>
+        </article>
+
+        <article class="service-card">
+            <div class="icon">05</div>
+            <h3>Qualitative Research</h3>
+            <p>Explore observations, experiences and descriptive information.</p>
+        </article>
+
+        <article class="service-card">
+            <div class="icon">06</div>
+            <h3>Mixed Methods</h3>
+            <p>Combine numerical and descriptive research approaches.</p>
+        </article>
+
+        <article class="service-card">
+            <div class="icon">07</div>
+            <h3>Experimental Research</h3>
+            <p>Investigate hypotheses through controlled experiments.</p>
+        </article>
+
+        <article class="service-card">
+            <div class="icon">08</div>
+            <h3>Computational Research</h3>
+            <p>Use mathematical models and computer simulations.</p>
+        </article>
+
+    </div>
+
+</section>
+
+
+<section class="submission" id="submit">
+
+    <div class="section-title">
+        <span>CONTRIBUTE TO KNOWLEDGE</span>
+        <h2>Research Submission Form</h2>
+        <p>Submit your research ideas and publications.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert {{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <form action="{{ url_for('submit') }}"
+          method="POST"
+          class="research-form">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Research Title *</label>
+                <input type="text"
+                       name="title"
+                       required
+                       placeholder="Enter your research title">
+            </div>
+
+            <div class="form-group">
+                <label>Author / Researcher *</label>
+                <input type="text"
+                       name="author"
+                       required
+                       placeholder="Enter researcher name">
+            </div>
+
+            <div class="form-group">
+                <label>Research Category *</label>
+
+                <select name="category" required>
+                    <option value="">Select category</option>
+
+                    {% for category in categories %}
+                        <option value="{{ category }}">
+                            {{ category }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Type of Research *</label>
+
+                <select name="research_type" required>
+                    <option value="">Select research type</option>
+
+                    {% for item in research_types %}
+                        <option value="{{ item }}">
+                            {{ item }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label>Research Objectives *</label>
+
+            <textarea name="objective"
+                      required
+                      placeholder="What do you want to investigate or achieve?"
+                      rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Research Methodology *</label>
+
+            <textarea name="methodology"
+                      required
+                      placeholder="Explain your research methods, tools, procedures and approach."
+                      rows="5"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Abstract *</label>
+
+            <textarea name="abstract"
+                      required
+                      placeholder="Provide a summary of your research."
+                      rows="6"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Research Findings</label>
+
+            <textarea name="findings"
+                      placeholder="Describe your results or expected findings."
+                      rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Keywords</label>
+
+            <input type="text"
+                   name="keywords"
+                   placeholder="AI, Robotics, Engineering, Technology">
+        </div>
+
+        <button type="submit" class="button submit-button">
+            Publish Research
+        </button>
+
+    </form>
+
+</section>
+
+
+<section class="library" id="library">
+
+    <div class="section-title">
+
+        <span>KNOWLEDGE LIBRARY</span>
+
+        <h2>Research Publications</h2>
+
+        <p>Explore research submitted to the RF platform.</p>
+
+        <a href="{{ url_for('download_csv') }}"
+           class="button">
+            Download All Research (CSV)
+        </a>
+
+    </div>
+
+
+    <div class="publication-grid">
+    {% if selected %}
+
+<div class="research-form">
+
+    <span class="badge">{{ selected["research_type"] }}</span>
+
+    <h2>{{ selected["title"] }}</h2>
+
+    <p><strong>Author:</strong> {{ selected["author"] }}</p>
+
+    <p><strong>Category:</strong> {{ selected["category"] }}</p>
+
+    <hr>
+
+    <h3>Research Objectives</h3>
+    <p>{{ selected["objective"] }}</p>
+
+    <h3>Research Methodology</h3>
+    <p>{{ selected["methodology"] }}</p>
+
+    <h3>Abstract</h3>
+    <p>{{ selected["abstract"] }}</p>
+
+    <h3>Research Findings</h3>
+    <p>{{ selected["findings"] or "Not provided" }}</p>
+
+    <h3>Keywords</h3>
+    <p>{{ selected["keywords"] or "Not provided" }}</p>
+
+    <br>
+
+    <a class="button"
+       href="{{ url_for('download_pdf',
+       research_id=selected['id']) }}">
+       Download Complete Research PDF
+    </a>
+
+    <a class="button secondary"
+       href="{{ url_for('index') }}">
+       Back to Research Library
+    </a>
+
+</div>
+
+{% endif %}
+
+        {% for paper in research %}
+
+        <article class="publication-card">
+
+            <span class="badge">
+                {{ paper["research_type"] }}
+            </span>
+
+            <h3>{{ paper["title"] }}</h3>
+
+            <p class="author">
+                Researcher: {{ paper["author"] }}
+            </p>
+
+            <p>
+                {{ paper["abstract"][:220] }}
+                {% if paper["abstract"]|length > 220 %}...{% endif %}
+            </p>
+
+            <p class="date">
+                {{ paper["created_at"] }}
+            </p>
+
+            <div class="download-links">
+
+                <a href="{{ url_for(
+                    'download_pdf',
+                    research_id=paper['id']
+                ) }}">
+                    Download PDF
+                </a>
+
+                <a href="{{ url_for(
+                    'view_research',
+                    research_id=paper['id']
+                ) }}">
+                    View Details
+                </a>
+
+            </div>
+
+        </article>
+
+        {% else %}
+
+        <div class="empty-state">
+            <h3>No publications yet</h3>
+            <p>Be the first researcher to publish on RF.</p>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    <div class="footer-logo">RF</div>
+
+    <h3>Research Form and Publication</h3>
+
+    <p>
+        An open platform for research, innovation,
+        engineering and technology.
+    </p>
+
+    <p>© 2026 RF Research Forum. All rights reserved.</p>
+
+    <small>
+        Research contributions are submitted by their respective authors.
+        Submission does not constitute peer review or academic certification.
+    </small>
+
+</footer>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+</html>
+
